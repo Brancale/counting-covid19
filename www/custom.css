@@ -1,0 +1,64 @@
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+    background-color: #FFFFFF;
+}
+
+.skin-blue .main-header .logo {
+    background-color: #393a35;
+}
+
+.main-header .logo {
+    font-family: "Georgia", Times, "Times New Roman", serif;
+    background-color: #3e3f3a;
+}
+
+.skin-blue .main-header .logo:hover {
+    background-color: #393a35;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: #393a35;
+}
+
+div.content-wrapper {
+    background-color: #fff;
+}
+
+.body {
+    color: #393a35;
+}
+
+.h5 {
+    color: #393a35;
+}
+
+.sidebar {
+    background-color: #f7f5f0;
+    color: #393a35;
+}
+
+.skin-blue .main-sidebar {
+    background-color: #f7f5f0;
+}
+
+.skin-blue .sidebar a {
+    color: #393a35;
+}
+
+.skin-blue .sidebar-menu > li.active > a, .skin-blue .sidebar-menu > li:hover > a {
+    color: #0c0c0c;
+    background: #f7f5f0;
+    border-left-color: #3c8dbc;
+}
+
+.skin-blue .sidebar-menu > li > .treeview-menu {
+    margin: 0 1px;
+    background: #f4f4f4;
+}
+
+.skin-blue .main-header .navbar {
+    background-color: #3e3f3a;
+}
+
+.shiny-output-error-validation {
+    color: #e86a63;
+}
