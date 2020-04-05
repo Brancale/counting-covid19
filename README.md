@@ -23,4 +23,4 @@ COVID-19 metrics are drawn from the [Johns Hopkins CSSE COVID-19 repository](htt
 * United States, South Korea, Japan, Taiwan: poverty data from the [CIA World Factbook](https://www.cia.gov/library/publications/resources/the-world-factbook/)
 
 ## License <a name="license"></a>
-This app is licensed under the MIT License. If you find this dashboard useful, I respectfully ask that you include an acknowledgement or citation of its source.
+This app is licensed under the MIT License. If you find this dashboard useful for your own work, I respectfully ask that you include an acknowledgement or citation of its source.
