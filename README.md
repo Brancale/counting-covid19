@@ -8,8 +8,7 @@
 
 This Shiny dashboard is a tool for exploring the quantification of COVID-19 at a national level. Select variables to highlight countries and compare in-group and overall means.
 
-EDIT:::
-Visualizations like this can often tell us more about a country's testing capacity and reporting infrastructure than about the number of infections or deaths actually present at any given time.
+Remember that visualizations like this can often tell us more about a country's testing capacity and reporting infrastructure than about the number of infections or deaths actually present at any given time.
 
 Questions, suggestions, or requests for additional stats or functionalities to be added to the app can be directed to contactmspringsteen@gmail.com
 
