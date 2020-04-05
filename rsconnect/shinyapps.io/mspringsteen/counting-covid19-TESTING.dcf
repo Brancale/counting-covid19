@@ -1,0 +1,12 @@
+name: counting-covid19-TESTING
+title: counting-covid19-TESTING
+username:
+account: mspringsteen
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2052539
+bundleId: 2969905
+url: https://mspringsteen.shinyapps.io/counting-covid19-TESTING/
+when: 1586042943.22569
+asMultiple: FALSE
+asStatic: FALSE

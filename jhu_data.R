@@ -11,7 +11,8 @@ if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-
 total <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"))
 recovered <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"))
 deaths <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"))
-worldstats <- read.csv("Documents/GitHub/covid19-countries/worldstats.csv")
+testing <- read.csv("data/testing.csv")
+worldstats <- read.csv("worldstats.csv")
 
 # 0 observations to NA
 covid_cases <- list(total, recovered, deaths)
@@ -58,6 +59,7 @@ covid_cases <- lapply(covid_cases, function(df) {
   df$Date <- as.Date(df$Date, "%m/%d/%y")
   df
 })
+testing$Date <- as.Date(testing$Date, "%d %b %Y")
 
 # summarize by country
 covid_cases[[1]] <- aggregate(data = covid_cases[[1]], Total ~ Country + Date, sum, drop = FALSE)
@@ -73,6 +75,9 @@ covid_cases <- lapply(covid_cases, function(df) {
 # merge covid_cases
 covid_cases <- covid_cases %>% reduce(left_join, by = c("Country", "Date"))
 
+# merge covid_cases and testing on Country and Date
+covid_cases <- merge(covid_cases, testing, by = c("Country", "Date"), all = TRUE)
+
 # add DayCount variable
 covid_cases <- covid_cases %>% group_by(Country) %>% mutate(DayCount = row_number())
 
@@ -85,9 +90,6 @@ covid_cases <- covid_cases %>% group_by(Country) %>% mutate(NewCases = Total - l
 
 # add NewDeaths variable
 covid_cases <- covid_cases %>% group_by(Country) %>% mutate(NewDeaths = Deaths - lag(Deaths, default = first(Deaths)))
-
-# reorder variables
-covid_cases <- covid_cases[ , c(1, 2, 6, 7, 3, 8, 4, 5, 9)]
 
 # filter countries
 worldstats <- filter(worldstats, Country %in% levels(as.factor(covid_cases$Country)))
@@ -107,8 +109,11 @@ covid_cases$RecoveredRate <- covid_cases$Recovered/covid_cases$Total
 # add DeathRate variable
 covid_cases$DeathRate <- covid_cases$Deaths/covid_cases$Total
 
-# add Death_per100thou variable
-covid_cases$Deaths_per100thou <- (covid_cases$Deaths/covid_cases$Population)*100000
+# add Deathsper100_000 variable
+covid_cases$Deathsper100_000 <- (covid_cases$Deaths/covid_cases$Population)*100000
+
+# add Testsper100_000 variable
+covid_cases$Testsper100_000 <- (covid_cases$Tests/covid_cases$Population)*100000
 
 # add Population_mil variable
 covid_cases$Population_mil <- (covid_cases$Population)/1000000
@@ -119,8 +124,8 @@ covid_cases <- filter(covid_cases, Country != "MS Zaandam")
 
 # restructuring for app
 covid_cases <- covid_cases %>% drop_na(Day)
-covid_cases <- select(covid_cases, Country, Day, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
+covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
 
 # write csv
-write.csv(covid_cases, "Documents/GitHub/covid19-countries/covid_cases.csv", row.names = FALSE)
+write.csv(covid_cases, "covid_cases.csv", row.names = FALSE)
 rm(list=ls())

@@ -1,6 +1,7 @@
 # COVID-19 stats tracker
 # 28 March 2020
 # Mikaela Springsteen, contactmspringsteen@gmail.com
+# TEST
 
 # including code adapted from
 # https://github.com/ceefluz/radar
@@ -17,13 +18,17 @@ if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-proj
 if(!require(shinycssloaders)) install.packages("shinycssloaders", repos = "http://cran.us.r-project.org")
 if(!require(DT)) install.packages("DT", repos = "http://cran.us.r-project.org")
 if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
-
+if(!require(withr)) install.packages("withr", repos = "http://cran.us.r-project.org")
+if(!require(rintrojs)) install.packages("rintrojs", repos = "http://cran.us.r-project.org")
+if(!require(scales)) install.packages("scales", repos = "http://cran.us.r-project.org")
 
 # update data to be used
 # source("jhu_data.R")
 
 # import data
 covid_cases <- read.csv("covid_cases.csv")
+covid_cases$Cases <- covid_cases$Totalper100_000
+covid_cases$Tests <- covid_cases$Testsper100_000
 
 # Shiny ui
 ui <- dashboardPage(
@@ -36,23 +41,29 @@ ui <- dashboardPage(
                     headerText = tags$i("Questions? Suggestions? Want to request", tags$br(), 
                                         "a stat be added to the app? Get in touch at", tags$br(),
                                         "contactmspringsteen@gmail.com")),
-                  tags$li(a("ABOUT", href = "https://github.com/mikaelaspringsteen/counting-covid19"), class = "dropdown")),
+                  tags$li(a("ABOUT THIS APP", href = "https://github.com/mikaelaspringsteen/counting-covid19"), class = "dropdown")),
   # sidebar
   dashboardSidebar(
     useShinyjs(),
+    introjsUI(),
     width = 300,
     tags$br(),
-    h5("Select a single variable or combine", align = "center"),
+    h5("Select a single filter or combine", align = "center"),
     h5("several to visualize their impact on" , align = "center"),
     h5("tracking the spread of the virus.", align = "center"),
     tags$hr(),
+    introBox(data.step = 3, data.intro = "Click here to update graphs with your selections.",
     fluidRow(
       column(1, offset = 3,
       actionButton("updategraph", tags$b("Update graph"))
       )
+    )
     ),
+    introBox(data.step = 2, data.intro = "Selecting variables here will highlight any countries on the graph which match those characteristics.",
     sidebarMenu(
-      uiOutput("countries"),
+      introBox(data.step = 1, data.intro = "In most cases, you should include all countries. However, for advanced exploration, if you have reason to restrict your exploration to certain countries, you may do so here.",
+      uiOutput("countries")
+      ),
       menuItem("Population statistics", tabName = "populationstatistics",
                checkboxInput(
                  inputId = "popcheck", 
@@ -112,7 +123,7 @@ ui <- dashboardPage(
                ),
                checkboxInput(
                  inputId = "salariedcheck", 
-                 label = "% of workers in salaried occupatinos", 
+                 label = "% of workers in salaried occupations", 
                  value = FALSE
                ),
                sliderInput(
@@ -209,19 +220,63 @@ ui <- dashboardPage(
                )   
       )
     )
+    )
   ),
   # body
   dashboardBody(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),
+    introBox(data.step = 4, data.intro = "Switch between tabs to see different Covid-19 metrics. A description of the graph is located below each panel",
     tabsetPanel(
-      tabPanel("Cases per 100,000 people",
-               uiOutput("cases_graph")
+      tabPanel("Tests",
+               introBox(data.step = 5, data.intro = "Each graph is interactive. Hover over points/lines for more information, or find more settings (including a home button to reset axes) at the top right of each graph.",
+               fluidRow(column(12, uiOutput("tests_graph")))
+               ),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               fluidRow(column(12, helpText("The grey line represents the conditional mean for all countries, and the blue represents the mean for the highlighted countries. To interpret the number of cases and tests, raise 10 to the power of number displayed on the line (10 ^ that number).", tags$br(), "As more people are tested, the number of confimed cases increases. Countries who test a lot of people have more accurate rates of confirmed infection and case fatality.", tags$br(), "Countries with low testing and high case rates (toward the top left of the graph) likely have a large number of undetected cases in their population. Countries with high testing and low case rates (toward the bottom right of the graph) may be successfully containing the virus or, alternatively, may not be finding all of their positive cases.")))
       ),
-      tabPanel("Case fatality rate",
-               uiOutput("case_fatality_graph")
+      tabPanel("Cases",
+               fluidRow(column(12, uiOutput("cases_graph"))),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               fluidRow(column(12, helpText("The grey dotted line represents the conditional mean for all countries, and the blue dotted line represents the mean for the highlighted countries. To interpret the number of cases, raise 10 to the power of number displayed on the line (10 ^ that number). The light band around these lines represents the standard error.", tags$br(),"This number has been scaled to represent the number of confirmed cases for every 100,000 people in each country, in order to make comparison betweeen countries easier.", tags$br(), "If a country is not testing a lot of people, this number is probably lower than that country's actual infection rate, as a large number of mild cases may go undetected.")))
+      ),
+      tabPanel("Deaths",
+               fluidRow(column(12, uiOutput("case_fatality_graph"))),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               tags$br(),
+               fluidRow(column(12, helpText("The grey dotted line represents the conditional mean for all countries, and the blue dotted line represents the mean for the highlighted countries. To interpret the death rate, raise 10 to the power of number displayed on the line (10 ^ that number). The light band around these lines represents the standard error.", tags$br(),"Also known as the 'case fatality rate', this number is calculated by dividing the number of detected cases by the number of reported deaths.", tags$br(), "If a country is not testing a lot of people this number may be artifically high, as a large number of mild cases could go undetected. Confirmed cases may then represent the most severe cases—which are more likely to result in a death. If a country is not accurately recording Covid-19 deaths the case fatality rate may be artificially low for that country.")))
       )
+    )
     )
   )
 )
@@ -233,23 +288,40 @@ server <- function(input, output, session) {
     showModal(modalDialog(
       easyClose = TRUE,
       title = tags$b("Counting Covid-19"),
-      "Use this dashboard to explore the relationship between national statistics and the quantification of COVID-19. Select variables to highlight countries, then compare the mean rate of all countries to the mean rate of those selected countries.",
+      tags$b("What we know about the infection or death rate of Covid-19 depends on one thing:"),
+      tags$br(),
+      tags$b("how good are countries at counting the people who have Covid-19?"),
       tags$br(),
       tags$br(),
-      "Not sure where to start? Try looking at the relationship between the percent of the labour force in salaried employment and a country's case rate",
+      "The number of people tested and confirmed to have the virus (usually described as 'cases' of the virus), is lower than the total number of people who have the virus (called 'infections') because not everyone who has the virus will be tested. Some people, especially those with mild symptoms or those unable to access the healthcare system, will not be tested. This difference between the number of 'cases' and the number of 'infections' can vary from country to country, and will impact that country's apparent number of cases and their apparent mortality rate. This is why there is such a range of rates across the globe.", "For more, see ", tags$a(href = "https://www.npr.org/sections/goatsandsoda/2020/03/27/821958435/why-death-rates-from-coronavirus-can-be-deceiving", "Why 'Death Rates' From Coronavirus Can Be Deceiving"), "or ", tags$a(href = "https://www.bbc.com/future/article/20200401-coronavirus-why-death-and-mortality-rates-differ", "Coronavirus: Why death and mortality rates differ"), ".",
+      tags$br(),
+      tags$br(),
+      "Testing more people will result in better, more accurate data about Covid-19's infection and mortality rate, but what is it that makes certain countries better at testing than others? Is it money? Something about the population? Their system of healthcare?",
+      tags$br(),
+      tags$br(),
+      tags$b("Exploring what characteristics are associated with increased testing, lower case rates, or lower case fatality rates might help explain what makes some countries better at counting cases of Covid-19 than others."),
       tags$br(),
       tags$hr(),
-      fluidRow(column(12, offset = 1, tags$i("* reported cases ≠ actual infections *  * case fatality rate ≠ infection fatality rate *"))),
-      tags$br(),
-      tags$i("Visualizations like this can often tell us more about a country's testing capacity and reporting infrastructure than about the number of infections or deaths actually present at any given time."),
+      tags$b(tags$i("Please note: this app is based on a large dataset, and the graphs may take some time to load.")),
       tags$br(),
       tags$hr(),
-      "For information about combatting the spread of the virus, or about symptoms and treatment, there are a number of excellent resources run by infectious disease experts and medical professionals, including the ", tags$a(href = "https://www.who.int/emergencies/diseases/novel-coronavirus-2019", "WHO"), "and ", tags$a(href = "https://www.cdc.gov/coronavirus/2019-nCoV/index.html", "CDC"), "for public health information, the ", tags$a(href = "https://www.nih.gov/health-information/coronavirus", "NIH"), "and ", tags$a(href = "https://www.gisaid.org/", "GISAID"), "for research information, and ", tags$a(href = "https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "JHU"), "for data.",
+      tags$i("For information about combatting the spread of the virus, or about symptoms and treatment, there are a number of excellent resources run by infectious disease experts and medical professionals, including the ", tags$a(href = "https://www.who.int/emergencies/diseases/novel-coronavirus-2019", "WHO"), "and ", tags$a(href = "https://www.cdc.gov/coronavirus/2019-nCoV/index.html", "CDC"), "for public health information, the ", tags$a(href = "https://www.nih.gov/health-information/coronavirus", "NIH"), "and ", tags$a(href = "https://www.gisaid.org/", "GISAID"), "for research information, and ", tags$a(href = "https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "JHU"), "for data."),
       tags$br(),
-      tags$br()
+      tags$br(),
+      footer = tagList(
+        actionButton(inputId = "intro", label = tags$b("See how it works")))
     ))
   })
-  
+  # start intro tour
+  observeEvent(input$intro,{
+    removeModal()
+  })
+  observeEvent(input$intro,
+               introjs(session, options = list("nextLabel" = "Continue",
+                                               "prevLabel" = "Previous",
+                                               "doneLabel" = "Let's go!",
+                                               "showStepNumbers" = "false"))
+  )
   # general settings
   options(list(scipen = 99))
   # country selection
@@ -265,7 +337,7 @@ server <- function(input, output, session) {
   })
   # create minimal dataset
   min_covid_case <- reactive({
-    select(covid_cases, Country, Day, Totalper100_000, DeathRate) %>%
+    select(covid_cases, Country, Date, Day, Tests, Cases, DeathRate) %>%
       filter(Country %in% input$countriesinput)
   })
   # enable inputs if variable is checked
@@ -559,8 +631,8 @@ server <- function(input, output, session) {
     statscapacityfilter <- quote(between(StatsCapacity, as.numeric(input$statscapacityinput[1]), as.numeric(input$statscapacityinput[2])))
     covid_cases %>%
       select(
-        Country, Day, Totalper100_000, DeathRate,
-        if (input$popcheck == FALSE) {"Country"} else {"Population_mil"},
+        Country, Date, Day, Tests, Cases, DeathRate, Population_mil,
+        #if (input$popcheck == FALSE) {"Country"} else {"Population_mil"},
         if (input$agecheck == FALSE) {"Country"} else {"Over65_perc"},
         if (input$slumscheck == FALSE) {"Country"} else {"Slums_perc"},
         if (input$gdpcheck == FALSE) {"Country"} else {"GDP_pcap_ppp"},
@@ -574,7 +646,8 @@ server <- function(input, output, session) {
       ) %>%
     filter(
       Country %in% input$countriesinput,
-      if (input$popcheck == FALSE) {!is.na(Country)} else {!!popfilter},
+      #if (input$popcheck == FALSE) {!is.na(Country)} else {!!popfilter},
+      !!popfilter,
       if (input$agecheck == FALSE) {!is.na(Country)} else {!!agefilter},
       if (input$slumscheck == FALSE) {!is.na(Country)} else {!!slumsfilter},
       if (input$gdpcheck == FALSE) {!is.na(Country)} else {!!gdpfilter},
@@ -587,6 +660,59 @@ server <- function(input, output, session) {
       if (input$statscapacitycheck == FALSE) {!is.na(Country)} else {!!statscapacityfilter}
     )
   })
+  # layer check
+  layercheck <- reactive({input$slumscheck|input$gdpcheck|input$salariedcheck|input$povertycheck|input$lifeexpcheck|input$hospcheck|input$mdcheck|input$hygienecheck|input$statscapacitycheck})
+  # tests graph
+  tests_plot <- reactive({
+    validate(
+      need(input$countriesinput != "", "Please select at least 1 country from the dropdown to the left."))
+    validate(
+      need(try(select(selected_covid_case(), Country) != ""), "There are no countries matching the selected criteria.\nPlease select fewer variables, adjust the range of those already selected, or add additional countries from the dropdown to the left."))
+    plot <- 
+      with_options(list(digits = 1),
+      ggplotly(
+        ggplot(selected_covid_case()) +
+          geom_point(data = min_covid_case(), aes(x = Tests, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
+          geom_point(aes(x = Tests, y = Cases, group = Country), color = "#3c8dbc", show.legend = FALSE) +
+          geom_smooth(aes(x = Tests, y = Cases), data = min_covid_case(),
+                      method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6) +
+          geom_smooth(aes(x = Tests, y = Cases),
+                      method = "loess", se = FALSE, color = "#3c8dbc", size = .5, alpha = .6) +
+          scale_x_log10(expand = c(0, 0)) +
+          scale_y_log10(expand = c(0, 0)) +
+          labs(
+            title = "How is the rate of testing related to the confirmed rate of infection?",
+            x = "Tests performed per 100,000 people", y = "Confirmed Covid-19 cases per 100,000 people") +
+          theme(text = element_text(family = "Georgia"),
+                panel.background = element_rect(fill = "#f7f5f0", colour = "#f7f5f0"),
+                plot.title = element_text(face = "italic"),
+                plot.subtitle = element_text(face = "italic"),
+                axis.title = element_text(face = "italic"),
+                plot.caption = element_text(face = "italic"),
+                panel.grid.major = element_line(colour = "#D5D3CC", size = rel(.5)), 
+                panel.grid.major.x = element_blank(),
+                panel.grid.minor = element_blank(), 
+                axis.ticks = element_blank(),
+                axis.text.x = NULL,
+                axis.line.x = element_line(colour = "#908f85"),
+                plot.margin = unit(c(2, 1, 2, 1), "lines")),
+        height = 600
+      )
+      )
+  })
+  output$tests_plot <- renderPlotly({
+    input$updategraph
+    isolate({
+      tests_plot()
+    })
+  })
+  output$tests_graph <- renderUI({
+    withSpinner(
+      plotlyOutput("tests_plot"),
+      type = 1,
+      color = "#3c8dbc"
+    )
+  })
   # cases graph
   cases_plot <- reactive({
     validate(
@@ -594,37 +720,40 @@ server <- function(input, output, session) {
     validate(
       need(try(select(selected_covid_case(), Country) != ""), "There are no countries matching the selected criteria.\nPlease select fewer variables, adjust the range of those already selected, or add additional countries from the dropdown to the left."))
     plot <- 
+      with_options(list(digits = 1),
       ggplotly(
       ggplot(selected_covid_case()) +
-      geom_line(data = min_covid_case(), aes(x = Day, y = Totalper100_000, group = Country), color = "#bdc3c7", show.legend = FALSE) +
-      geom_line(aes(x = Day, y = Totalper100_000, group = Country), color = "#3c8dbc", show.legend = FALSE) +
-      geom_smooth(aes(x = Day, y = Totalper100_000), data = min_covid_case(),
-                    method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
-      geom_ribbon(aes(x = Day, y = Totalper100_000), data = min_covid_case(),
-                    stat = "smooth", method = "loess", alpha = .15) +
-      geom_smooth(aes(x = Day, y = Totalper100_000),
-                    method = "loess", se = FALSE, color = "#3c8dbc", size = .5, alpha = .6, linetype = "dotted") +
-      geom_ribbon(aes(x = Day, y = Totalper100_000),
-                    stat = "smooth", method = "loess", alpha = .15) +
+      geom_line(data = min_covid_case(), aes(x = Day, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
+      geom_line(aes(x = Day, y = Cases, group = Country), color = "#3c8dbc", show.legend = FALSE) +
+      geom_smooth(aes(x = Day, y = Cases), data = min_covid_case(),
+        method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
+      geom_ribbon(aes(x = Day, y = Cases), data = min_covid_case(),
+        stat = "smooth", method = "loess", alpha = .15) +
+      geom_smooth(aes(x = Day, y = Cases),
+        method = "loess", se = FALSE, color = "#3c8dbc", size = .5, alpha = .6, linetype = "dotted") +
+      geom_ribbon(aes(x = Day, y = Cases),
+        stat = "smooth", method = "loess", alpha = .15) +
       labs(
-        title = "Detected cases per 100,000 people",
-        x = "Days from 100th in-country case", y = "") +
+        title = "How many people, that we know of, have Covid-19?",
+        x = "Days from 100th in-country case", y = "Detected cases per 100,000 people") +
       scale_x_continuous(expand = c(0, 0)) +
-      scale_y_log10(expand = c(0, 0), breaks = c(0, .1, 1, 10, 100, 1000)) +
+      scale_y_log10(expand = c(0, 0)) +
       theme(text = element_text(family = "Georgia"),
-            panel.background = element_rect(fill = "#f7f5f0", colour = "#f7f5f0"),
-            plot.title = element_text(face = "italic"),
-            plot.subtitle = element_text(face = "italic"),
-            axis.title = element_text(face = "italic"),
-            plot.caption = element_text(face = "italic"),
-            panel.grid.major = element_line(colour = "#D5D3CC", size = rel(.5)), 
-            panel.grid.major.x = element_blank(),
-            panel.grid.minor = element_blank(), 
-            axis.ticks = element_blank(),
-            axis.text.x = NULL,
-            axis.line.x = element_line(colour = "#908f85"),
-            plot.margin = unit(c(2, 1, 2, 1), "lines")),
-      height = 600
+        panel.background = element_rect(fill = "#f7f5f0", colour = "#f7f5f0"),
+        plot.title = element_text(face = "italic"),
+        plot.subtitle = element_text(face = "italic"),
+        axis.title = element_text(face = "italic"),
+        plot.caption = element_text(face = "italic"),
+        panel.grid.major = element_line(colour = "#D5D3CC", size = rel(.5)), 
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = NULL,
+        axis.line.x = element_line(colour = "#908f85"),
+        plot.margin = unit(c(2, 1, 2, 1), "lines")),
+      height = 600,
+      tooltip = c("text", "x", "y", "group")
+      )
       )
   })
   output$cases_plot <- renderPlotly({
@@ -647,6 +776,7 @@ server <- function(input, output, session) {
     validate(
       need(try(select(selected_covid_case(), Country) != ""), "There are no countries matching the selected criteria.\nPlease select fewer variables, adjust the range of those already selected, or add additional countries from the dropdown to the left."))
     plot <- 
+      with_options(list(digits = 1),
       ggplotly(
       ggplot(selected_covid_case()) +
       geom_line(data = min_covid_case(), aes(x = Day, y = DeathRate, group = Country), color = "#bdc3c7", show.legend = FALSE) +
@@ -660,9 +790,9 @@ server <- function(input, output, session) {
       geom_ribbon(aes(x = Day, y = DeathRate),
                     stat = "smooth", method = "loess", alpha = .15) +
       labs(
-        title = list(text = paste0("Case fatality rate", "<br>", "<sup>",
-                                   "percent of detected cases resulting in a death","<sup>")),
-        x = "Days from 100th in-country case", y = "") +
+        title = list(text = paste0("Of the people that we know have Covid-19, what percent have died?", "<br>", "<sup>",
+                                   "","<sup>")),
+        x = "Days from 100th in-country case", y = "Percent of detected cases resulting in a death") +
       scale_x_continuous(expand = c(0, 0)) +
       scale_y_continuous(expand = c(0, 0), breaks = c(.001, .01, .05, .1, .15), labels = scales::percent) +
       theme(text = element_text(family = "Georgia"),
@@ -679,6 +809,7 @@ server <- function(input, output, session) {
             axis.line.x = element_line(colour = "#908f85"),
             plot.margin = unit(c(2, 1, 2, 1), "lines")),
       height = 600
+      )
       )
   })
   output$case_fatality_plot <- renderPlotly({

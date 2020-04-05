@@ -109,6 +109,11 @@ worldbank$Country[worldbank$Country == "Slovak Republic"] <- "Slovakia"
 worldbank$Country[worldbank$Country == "Syrian Arab Republic"] <- "Syria"
 worldbank$Country[worldbank$Country == "Venezuela, RB"] <- "Venezuela"
 
+# add worldbank supplement csv
+worldbank <- ungroup(worldbank)
+worldbank_supp <- read.csv("data/worldbank_supplement.csv", stringsAsFactors = FALSE)
+worldbank <- rbind(worldbank, worldbank_supp)
+
 # validate country names
 #setdiff(levels(as.factor(covid_cases$Country)), levels(as.factor(who$Country)))
 
@@ -154,6 +159,11 @@ mdg$Country[mdg$Country == "Swaziland"] <- "Eswatini"
 mdg$Country[mdg$Country == "United Republic of Tanzania"] <- "Tanzania"
 mdg$Country[mdg$Country == "The former Yugoslav Republic of Macedonia"] <- "North Macedonia"
 mdg$Country[mdg$Country == "Viet Nam"] <- "Vietnam"
+
+# add worldbank supplement csv
+mdg <- ungroup(mdg)
+mdg_supp <- read.csv("data/mdg_supplement.csv", stringsAsFactors = FALSE)
+mdg <- rbind(mdg, mdg_supp)
 
 # merge world bank, WHO, and mdg data
 worldstats <- Reduce(function(x, y) merge(x, y, by = c("Country"), all = TRUE), list(worldbank, who, mdg))
