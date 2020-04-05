@@ -668,6 +668,8 @@ server <- function(input, output, session) {
       need(input$countriesinput != "", "Please select at least 1 country from the dropdown to the left."))
     validate(
       need(try(select(selected_covid_case(), Country) != ""), "There are no countries matching the selected criteria.\nPlease select fewer variables, adjust the range of those already selected, or add additional countries from the dropdown to the left."))
+    validate(
+      need(try(select(selected_covid_case(), Tests) != ""), "That country has no testing data available."))
     plot <- 
       with_options(list(digits = 1),
       ggplotly(

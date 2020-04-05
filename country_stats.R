@@ -85,7 +85,7 @@ names(who)[2] <- c("HospBed_per10thou")
 names(who)[3] <- c("MD_per10thou")
 
 # validate country names
-#setdiff(levels(as.factor(covid_cases$Country)), levels(as.factor(worldbank$Country)))
+setdiff(levels(as.factor(covid_cases$Country)), levels(as.factor(worldbank$Country)))
 
 # format world bank country names
 worldbank$Country[worldbank$Country == "Bahamas, The"] <- "The Bahamas"
@@ -93,7 +93,7 @@ worldbank$Country[worldbank$Country == "Brunei Darussalam"] <- "Brunei"
 worldbank$Country[worldbank$Country == "Cabo Verde"] <- "Cape Verde"
 worldbank$Country[worldbank$Country == "Congo, Dem. Rep."] <- "Democratic Republic of the Congo"
 worldbank$Country[worldbank$Country == "Congo, Rep."] <- "Republic of the Congo"
-worldbank$Country[worldbank$Country == "Czech Republic"] <- "Czechia"
+#worldbank$Country[worldbank$Country == "Czech Republic"] <- "Czechia"
 worldbank$Country[worldbank$Country == "Egypt, Arab Rep."] <- "Egypt"
 worldbank$Country[worldbank$Country == "Gambia, The"] <- "The Gambia"
 worldbank$Country[worldbank$Country == "Hong Kong SAR, China"] <- "Hong Kong"
