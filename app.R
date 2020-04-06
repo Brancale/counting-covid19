@@ -3,7 +3,7 @@
 # Mikaela Springsteen, contactmspringsteen@gmail.com
 # TEST
 
-# including code adapted from
+# includes code adapted from
 # https://github.com/ceefluz/radar
 
 # packages
@@ -61,7 +61,7 @@ ui <- dashboardPage(
     ),
     introBox(data.step = 2, data.intro = "Selecting variables here will highlight any countries on the graph which match those characteristics.",
     sidebarMenu(
-      introBox(data.step = 1, data.intro = "In most cases, you should include all countries. However, for advanced exploration, if you have reason to restrict your exploration to certain countries, you may do so here.",
+      introBox(data.step = 1, data.intro = "In most cases, you should include all countries. To isolate the course of the virus in specific countries, double click on the country name to the right of the graphs. For advanced exploration, if you have reason to restrict your exploration to certain countries, you may do so here.",
       uiOutput("countries")
       ),
       menuItem("Population statistics", tabName = "populationstatistics",
@@ -230,7 +230,7 @@ ui <- dashboardPage(
     introBox(data.step = 4, data.intro = "Switch between tabs to see different Covid-19 metrics. A description of the graph is located below each panel.",
     tabsetPanel(
       tabPanel("Tests",
-               introBox(data.step = 5, data.intro = "Each graph is interactive. Hover over points/lines for more information, or find more settings (including a home button to reset axes) at the top right of each graph.",
+               introBox(data.step = 5, data.intro = "Each graph is interactive. Hover over points/lines for more information, or find more settings (including a home button to reset axes) at the top right of each graph. Double click on the name of a country (to the right of the graph) to highlight only that country.",
                fluidRow(column(12, uiOutput("tests_graph")))
                ),
                tags$br(),
@@ -632,7 +632,7 @@ server <- function(input, output, session) {
     covid_cases %>%
       select(
         Country, Date, Day, Tests, Cases, DeathRate, Population_mil,
-        #if (input$popcheck == FALSE) {"Country"} else {"Population_mil"},
+        if (input$popcheck == FALSE) {"Country"} else {"Population_mil"},
         if (input$agecheck == FALSE) {"Country"} else {"Over65_perc"},
         if (input$slumscheck == FALSE) {"Country"} else {"Slums_perc"},
         if (input$gdpcheck == FALSE) {"Country"} else {"GDP_pcap_ppp"},
@@ -646,8 +646,7 @@ server <- function(input, output, session) {
       ) %>%
     filter(
       Country %in% input$countriesinput,
-      #if (input$popcheck == FALSE) {!is.na(Country)} else {!!popfilter},
-      !!popfilter,
+      if (input$popcheck == FALSE) {!is.na(Country)} else {!!popfilter},
       if (input$agecheck == FALSE) {!is.na(Country)} else {!!agefilter},
       if (input$slumscheck == FALSE) {!is.na(Country)} else {!!slumsfilter},
       if (input$gdpcheck == FALSE) {!is.na(Country)} else {!!gdpfilter},
@@ -660,8 +659,6 @@ server <- function(input, output, session) {
       if (input$statscapacitycheck == FALSE) {!is.na(Country)} else {!!statscapacityfilter}
     )
   })
-  # layer check
-  layercheck <- reactive({input$slumscheck|input$gdpcheck|input$salariedcheck|input$povertycheck|input$lifeexpcheck|input$hospcheck|input$mdcheck|input$hygienecheck|input$statscapacitycheck})
   # tests graph
   tests_plot <- reactive({
     validate(
@@ -675,7 +672,7 @@ server <- function(input, output, session) {
       ggplotly(
         ggplot(selected_covid_case()) +
           geom_point(data = min_covid_case(), aes(x = Tests, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
-          geom_point(aes(x = Tests, y = Cases, group = Country), color = "#3c8dbc", show.legend = FALSE) +
+          geom_point(aes(x = Tests, y = Cases, color = Country), show.legend = FALSE) +
           geom_smooth(aes(x = Tests, y = Cases), data = min_covid_case(),
                       method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6) +
           geom_smooth(aes(x = Tests, y = Cases),
@@ -726,7 +723,7 @@ server <- function(input, output, session) {
       ggplotly(
       ggplot(selected_covid_case()) +
       geom_line(data = min_covid_case(), aes(x = Day, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
-      geom_line(aes(x = Day, y = Cases, group = Country), color = "#3c8dbc", show.legend = FALSE) +
+      geom_line(aes(x = Day, y = Cases, color = Country), show.legend = FALSE) +
       geom_smooth(aes(x = Day, y = Cases), data = min_covid_case(),
         method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
       geom_ribbon(aes(x = Day, y = Cases), data = min_covid_case(),
@@ -782,7 +779,7 @@ server <- function(input, output, session) {
       ggplotly(
       ggplot(selected_covid_case()) +
       geom_line(data = min_covid_case(), aes(x = Day, y = DeathRate, group = Country), color = "#bdc3c7", show.legend = FALSE) +
-      geom_line(aes(x = Day, y = DeathRate, group = Country), color = "#3c8dbc", show.legend = FALSE) +
+      geom_line(aes(x = Day, y = DeathRate, color = Country), show.legend = FALSE) +
       geom_smooth(aes(x = Day, y = DeathRate), data = min_covid_case(),
                     method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
       geom_ribbon(aes(x = Day, y = DeathRate), data = min_covid_case(),
