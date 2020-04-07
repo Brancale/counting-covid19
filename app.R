@@ -1,7 +1,6 @@
 # COVID-19 stats tracker
 # 28 March 2020
 # Mikaela Springsteen, contactmspringsteen@gmail.com
-# TEST
 
 # includes code adapted from
 # https://github.com/ceefluz/radar
@@ -35,6 +34,7 @@ ui <- dashboardPage(
   # header
   dashboardHeader(title = "Counting Covid-19", titleWidth = 300,
                   
+                  tags$li(a(tags$i("*US state version of the app forthcoming*"), href = ""), class = "dropdown"),
                   dropdownMenu(type = "notifications", 
                     icon = icon("question"), 
                     badgeStatus = NULL,
@@ -42,6 +42,7 @@ ui <- dashboardPage(
                                         "a stat be added to the app? Get in touch at", tags$br(),
                                         "contactmspringsteen@gmail.com")),
                   tags$li(a("ABOUT THIS APP", href = "https://github.com/mikaelaspringsteen/counting-covid19"), class = "dropdown")),
+
   # sidebar
   dashboardSidebar(
     useShinyjs(),
