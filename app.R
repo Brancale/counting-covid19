@@ -724,7 +724,7 @@ server <- function(input, output, session) {
       ggplotly(
       ggplot(selected_covid_case()) +
       geom_line(data = min_covid_case(), aes(x = Day, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
-      geom_line(aes(x = Day, y = Cases, color = Country), show.legend = FALSE) +
+      geom_line(aes(x = Day, y = Cases, color = Country, group = Country), show.legend = FALSE) +
       geom_smooth(aes(x = Day, y = Cases), data = min_covid_case(),
         method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
       geom_ribbon(aes(x = Day, y = Cases), data = min_covid_case(),
