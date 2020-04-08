@@ -34,7 +34,7 @@ ui <- dashboardPage(
   # header
   dashboardHeader(title = "Counting Covid-19", titleWidth = 300,
                   
-                  tags$li(a(tags$i("*US state version of the app forthcoming*"), href = ""), class = "dropdown"),
+                  tags$li(a(tags$i("*compare US infection rates here*"), href = "https://mspringsteen.shinyapps.io/counting-covid19-USA/"), class = "dropdown"),
                   dropdownMenu(type = "notifications", 
                     icon = icon("question"), 
                     badgeStatus = NULL,
