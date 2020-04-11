@@ -22,7 +22,7 @@ if(!require(rintrojs)) install.packages("rintrojs", repos = "http://cran.us.r-pr
 if(!require(scales)) install.packages("scales", repos = "http://cran.us.r-project.org")
 
 # update data to be used
-# source("jhu_data.R")
+#source("jhu_data.R")
 
 # import data
 covid_cases <- read.csv("covid_cases.csv")
