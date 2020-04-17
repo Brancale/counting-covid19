@@ -32,9 +32,9 @@ covid_cases$Tests <- covid_cases$Testsper100_000
 # Shiny ui
 ui <- dashboardPage(
   # header
-  dashboardHeader(title = "Counting Covid-19", titleWidth = 300,
+  dashboardHeader(title = "Counting Covid-19: International", titleWidth = 300,
                   
-                  tags$li(a(tags$i("*compare US infection rates here*"), href = "https://mspringsteen.shinyapps.io/counting-covid19-USA/"), class = "dropdown"),
+                  tags$li(a(tags$i("*compare infection rates for other regions here*"), href = "https://mikaelaspringsteen.github.io/countingcovid19/"), class = "dropdown"),
                   dropdownMenu(type = "notifications", 
                     icon = icon("question"), 
                     badgeStatus = NULL,
@@ -62,7 +62,7 @@ ui <- dashboardPage(
     ),
     introBox(data.step = 2, data.intro = "Selecting variables here will highlight any countries on the graph which match those characteristics.",
     sidebarMenu(
-      introBox(data.step = 1, data.intro = "In most cases, you should include all countries. To isolate the course of the virus in specific countries, double click on the country name to the right of the graphs. For advanced exploration, if you have reason to restrict your exploration to certain countries, you may do so here.",
+      introBox(data.step = 1, data.intro = "In most cases, you should include all countries. To isolate the course of the virus in specific countries, double click on the country name to the right of the graph. Otherwise, if you have reason to restrict your exploration to certain countries, you may do so here.",
       uiOutput("countries")
       ),
       menuItem("Population statistics", tabName = "populationstatistics",
@@ -245,7 +245,7 @@ ui <- dashboardPage(
                tags$br(),
                tags$br(),
                tags$br(),
-               fluidRow(column(12, helpText("The grey line represents the conditional mean for all countries, and the blue represents the mean for the highlighted countries. To interpret the number of cases and tests, raise 10 to the power of number displayed on the line (10 ^ that number).", tags$br(), "As more people are tested, the number of confimed cases increases. Countries who test a lot of people have more accurate rates of confirmed infection and case fatality.", tags$br(), "Countries with low testing and high case rates (toward the top left of the graph) likely have a large number of undetected cases in their population. Countries with high testing and low case rates (toward the bottom right of the graph) may be successfully containing the virus or, alternatively, may not be finding all of their positive cases.")))
+               fluidRow(column(12, helpText("The grey line represents the conditional mean for all countries, and the blue represents the mean for the highlighted countries. To interpret the number of cases and tests, raise 10 to the number displayed when hovering over the line (10 ^ that number).", tags$br(), "As more people are tested, the number of confimed cases increases. Countries who test a lot of people have more accurate rates of confirmed infection and case fatality.", tags$br(), "Countries with low testing and high case rates (toward the top left of the graph) likely have a large number of undetected cases in their population. Countries with high testing and low case rates (toward the bottom right of the graph) may be successfully containing the virus or, alternatively, may not be finding all of their positive cases.")))
       ),
       tabPanel("Cases",
                fluidRow(column(12, uiOutput("cases_graph"))),
@@ -260,7 +260,7 @@ ui <- dashboardPage(
                tags$br(),
                tags$br(),
                tags$br(),
-               fluidRow(column(12, helpText("The grey dotted line represents the conditional mean for all countries, and the blue dotted line represents the mean for the highlighted countries. To interpret the number of cases, raise 10 to the power of number displayed on the line (10 ^ that number). The light band around these lines represents the standard error.", tags$br(),"This number has been scaled to represent the number of confirmed cases for every 100,000 people in each country, in order to make comparison betweeen countries easier.", tags$br(), "If a country is not testing a lot of people, this number is probably lower than that country's actual infection rate, as a large number of mild cases may go undetected.")))
+               fluidRow(column(12, helpText("The grey dotted line represents the conditional mean for all countries, and the blue dotted line represents the mean for the highlighted countries. To interpret the number of cases, raise 10 to the number displayed when hovering over the line (10 ^ that number). The light band around these lines represents the standard error.", tags$br(),"This number has been scaled to represent the number of confirmed cases for every 100,000 people in each country, in order to make comparison betweeen countries easier.", tags$br(), "If a country is not testing many people, this number is probably lower than that country's actual infection rate, as a large number of mild cases may go undetected.")))
       ),
       tabPanel("Deaths",
                fluidRow(column(12, uiOutput("case_fatality_graph"))),
@@ -275,7 +275,7 @@ ui <- dashboardPage(
                tags$br(),
                tags$br(),
                tags$br(),
-               fluidRow(column(12, helpText("The grey dotted line represents the conditional mean for all countries, and the blue dotted line represents the mean for the highlighted countries. To interpret the death rate, raise 10 to the power of number displayed on the line (10 ^ that number). The light band around these lines represents the standard error.", tags$br(),"Also known as the 'case fatality rate', this number is calculated by dividing the number of detected cases by the number of reported deaths.", tags$br(), "If a country is not testing a lot of people this number may be artifically high, as a large number of mild cases could go undetected. Confirmed cases may then represent the most severe cases—which are more likely to result in a death. If a country is not accurately recording Covid-19 deaths the case fatality rate may be artificially low for that country.")))
+               fluidRow(column(12, helpText("The grey dotted line represents the conditional mean for all countries, and the blue dotted line represents the mean for the highlighted countries. To interpret the death rate, raise 10 to the number displayed when hovering over the line (10 ^ that number). The light band around these lines represents the standard error.", tags$br(),"Also known as the 'case fatality rate', this number is calculated by dividing the number of detected cases by the number of reported deaths.", tags$br(), "If a country is not testing many people this number may be artifically high, as a large number of mild cases could go undetected. Confirmed cases may therefore represent the most severe cases—which are more likely to result in a death. If a country is not accurately recording Covid-19 deaths the case fatality rate may be artificially low for that country.")))
       )
     )
     )
@@ -288,7 +288,7 @@ server <- function(input, output, session) {
   observeEvent("", {
     showModal(modalDialog(
       easyClose = TRUE,
-      title = tags$b("Counting Covid-19"),
+      title = tags$b("Counting Covid-19 International"),
       tags$b("What we know about the infection or death rate of Covid-19 depends on one thing:"),
       tags$br(),
       tags$b("how good are countries at counting the people who have Covid-19?"),
