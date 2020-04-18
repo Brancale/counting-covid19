@@ -1,4 +1,4 @@
-# Covid-19 by the Numbers
+# Counting Covid-19 (International)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
