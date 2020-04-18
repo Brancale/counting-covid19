@@ -4,15 +4,29 @@
 # COVID-19 data from Johns Hopkins University:
 # https://github.com/CSSEGISandData/COVID-19
 
+# testing data from Our World in Data:
+# https://github.com/owid/covid-19-data/tree/master/public/data
+
 # packages
 if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+if(!require(reshape2)) install.packages("reshape2", repos = "http://cran.us.r-project.org")
 
 # load data
 total <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"))
 recovered <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"))
 deaths <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"))
-testing <- read.csv("data/testing.csv")
-worldstats <- read.csv("worldstats.csv")
+testing <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv"))
+worldstats <- read.csv("data/worldstats.csv")
+
+# select, rename testing variables
+testing <- select(testing, Entity, Date, "Cumulative total")
+names(testing) <- c("Description", "Date", "Tests")
+testing <- filter(testing, Description != "United States - inconsistent units (COVID Tracking Project)")
+testing <- filter(testing, Description != "Japan - people tested")
+
+# split testing$Entity into Country and Units
+newtesting <- colsplit(testing$Description, " - ", names = c("Country", "Units"))
+testing <- cbind(testing, newtesting)
 
 # 0 observations to NA
 covid_cases <- list(total, recovered, deaths)
@@ -59,7 +73,7 @@ covid_cases <- lapply(covid_cases, function(df) {
   df$Date <- as.Date(df$Date, "%m/%d/%y")
   df
 })
-testing$Date <- as.Date(testing$Date, "%d %b %Y")
+testing$Date <- as.Date(testing$Date, "%Y-%m-%d")
 
 # summarize by country
 covid_cases[[1]] <- aggregate(data = covid_cases[[1]], Total ~ Country + Date, sum, drop = FALSE)
@@ -124,7 +138,7 @@ covid_cases <- filter(covid_cases, Country != "MS Zaandam")
 
 # restructuring for app
 covid_cases <- covid_cases %>% drop_na(Day)
-covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
+covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, Units, Description, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
 
 # write csv
 write.csv(covid_cases, "covid_cases.csv", row.names = FALSE)

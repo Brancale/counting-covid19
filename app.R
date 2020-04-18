@@ -32,7 +32,7 @@ covid_cases$Tests <- covid_cases$Testsper100_000
 # Shiny ui
 ui <- dashboardPage(
   # header
-  dashboardHeader(title = "Counting Covid-19: International", titleWidth = 300,
+  dashboardHeader(title = "Counting Covid-19 International", titleWidth = 300,
                   
                   tags$li(a(tags$i("*compare infection rates for other regions here*"), href = "https://mikaelaspringsteen.github.io/countingcovid19/"), class = "dropdown"),
                   dropdownMenu(type = "notifications", 
@@ -288,7 +288,7 @@ server <- function(input, output, session) {
   observeEvent("", {
     showModal(modalDialog(
       easyClose = TRUE,
-      title = tags$b("Counting Covid-19 International"),
+      title = tags$b("Counting Covid-19: International"),
       tags$b("What we know about the infection or death rate of Covid-19 depends on one thing:"),
       tags$br(),
       tags$b("how good are countries at counting the people who have Covid-19?"),
@@ -672,12 +672,16 @@ server <- function(input, output, session) {
       with_options(list(digits = 1),
       ggplotly(
         ggplot(selected_covid_case()) +
-          geom_point(data = min_covid_case(), aes(x = Tests, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
-          geom_point(aes(x = Tests, y = Cases, color = Country), show.legend = FALSE) +
+          geom_line(data = min_covid_case(), aes(x = Tests, y = Cases, group = Country), color = "#bdc3c7", show.legend = FALSE) +
+          geom_line(aes(x = Tests, y = Cases, color = Country), show.legend = FALSE) +
           geom_smooth(aes(x = Tests, y = Cases), data = min_covid_case(),
-                      method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6) +
+                      method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
+          geom_ribbon(aes(x = Tests, y = Cases), data = min_covid_case(),
+                      stat = "smooth", method = "loess", alpha = .15) +
           geom_smooth(aes(x = Tests, y = Cases),
-                      method = "loess", se = FALSE, color = "#3c8dbc", size = .5, alpha = .6) +
+                      method = "loess", se = FALSE, color = "#3c8dbc", size = .5, alpha = .6, linetype = "dotted") +
+          geom_ribbon(aes(x = Tests, y = Cases),
+                      stat = "smooth", method = "loess", alpha = .15) +
           scale_x_log10(expand = c(0, 0)) +
           scale_y_log10(expand = c(0, 0)) +
           labs(
