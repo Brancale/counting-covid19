@@ -53,6 +53,7 @@ covid_cases <- lapply(covid_cases, function(df) {
   df$Country[df$Country == "Bahamas"] <- "The Bahamas"
   df$Country[df$Country == "Burma"] <- "Myanmar"
   df$Country[df$Country == "Cabo Verde"] <- "Cape Verde"
+  df$Country[df$Country == "Czech Republic"] <- "Czechia"
   df$Country[df$Country == "Congo (Brazzaville)"] <- "Republic of the Congo"
   df$Country[df$Country == "Congo (Kinshasa)"] <- "Democratic Republic of the Congo"
   df$Country[df$Country == "East Timor"] <- "Timor-Leste"
@@ -74,6 +75,7 @@ covid_cases <- lapply(covid_cases, function(df) {
   df
 })
 testing$Date <- as.Date(testing$Date, "%Y-%m-%d")
+testing$Country[testing$Country == "Czech Republic"] <- "Czechia"
 
 # summarize by country
 covid_cases[[1]] <- aggregate(data = covid_cases[[1]], Total ~ Country + Date, sum, drop = FALSE)

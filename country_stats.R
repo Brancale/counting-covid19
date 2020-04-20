@@ -85,7 +85,7 @@ names(who)[2] <- c("HospBed_per10thou")
 names(who)[3] <- c("MD_per10thou")
 
 # validate country names
-setdiff(levels(as.factor(covid_cases$Country)), levels(as.factor(worldbank$Country)))
+#setdiff(levels(as.factor(covid_cases$Country)), levels(as.factor(worldbank$Country)))
 
 # format world bank country names
 worldbank$Country[worldbank$Country == "Bahamas, The"] <- "The Bahamas"
@@ -93,7 +93,7 @@ worldbank$Country[worldbank$Country == "Brunei Darussalam"] <- "Brunei"
 worldbank$Country[worldbank$Country == "Cabo Verde"] <- "Cape Verde"
 worldbank$Country[worldbank$Country == "Congo, Dem. Rep."] <- "Democratic Republic of the Congo"
 worldbank$Country[worldbank$Country == "Congo, Rep."] <- "Republic of the Congo"
-#worldbank$Country[worldbank$Country == "Czech Republic"] <- "Czechia"
+worldbank$Country[worldbank$Country == "Czech Republic"] <- "Czechia"
 worldbank$Country[worldbank$Country == "Egypt, Arab Rep."] <- "Egypt"
 worldbank$Country[worldbank$Country == "Gambia, The"] <- "The Gambia"
 worldbank$Country[worldbank$Country == "Hong Kong SAR, China"] <- "Hong Kong"
@@ -108,6 +108,8 @@ worldbank$Country[worldbank$Country == "Russian Federation"] <- "Russia"
 worldbank$Country[worldbank$Country == "Slovak Republic"] <- "Slovakia"
 worldbank$Country[worldbank$Country == "Syrian Arab Republic"] <- "Syria"
 worldbank$Country[worldbank$Country == "Venezuela, RB"] <- "Venezuela"
+worldbank$Country[worldbank$Country == "Yemen, Rep."] <- "Yemen"
+worldbank$Country[worldbank$Country == "West Bank and Gaza"] <- "Palestine"
 
 # add worldbank supplement csv
 worldbank <- ungroup(worldbank)
@@ -133,6 +135,7 @@ who$Country[who$Country == "Republic of Moldova"] <- "Moldova"
 who$Country[who$Country == "Republic of North Macedonia"] <- "North Macedonia"
 who$Country[who$Country == "Russian Federation"] <- "Russia"
 who$Country[who$Country == "Saint Lucia"] <- "St. Lucia"
+who$Country[who$Country == "Saint Kitts and Nevis"] <- "St. Kitts and Nevis"
 who$Country[who$Country == "Saint Vincent and the Grenadines"] <- "St. Vincent and the Grenadines"
 who$Country[who$Country == "Syrian Arab Republic"] <- "Syria"
 who$Country[who$Country == "United Kingdom of Great Britain and Northern Ireland"] <- "United Kingdom"
