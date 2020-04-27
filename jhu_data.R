@@ -10,19 +10,91 @@
 # packages
 if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 if(!require(reshape2)) install.packages("reshape2", repos = "http://cran.us.r-project.org")
+if(!require(stringi)) install.packages("stringi", repos = "http://cran.us.r-project.org")
 
 # load data
 total <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"))
 recovered <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"))
 deaths <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"))
 testing <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv"))
+coronanet <- as.data.frame(data.table::fread("https://raw.githubusercontent.com/saudiwin/corona_tscs/master/data/CoronaNet/coronanet_release.csv"))
 worldstats <- read.csv("data/worldstats.csv")
+
+# select, rename coronanet variables
+coronanet <- select(coronanet, -date_announced, -date_end, -type_text, -source_file_Type, -target_direction, -travel_mechanism, -compliance, -enforcer, -ISO_A3, -ISO_A2, -link_type, -target_country, -target_geog_level, -target_region, -target_province, -target_city, -target_other, -target_who_what, -index_high_est, -index_med_est, -index_low_est, -index_country_rank, -domestic_policy, -type_num_vaccines)
+coronanet$type[coronanet$type == "Restriction of Non-Essential Businesses"] <- "Restrict businesses"
+coronanet$type[coronanet$type == "Restriction of Non-Essential Government Services"] <- "Restrict gov. services"
+coronanet$type[coronanet$type == "Closure of Schools"] <- "School closure"
+coronanet$type[coronanet$type == "External Border Restrictions"] <- "Restrict external borders"
+coronanet$type[coronanet$type == "Internal Border Restrictions"] <- "Restrict internal borders"
+coronanet$type[coronanet$type == "Restrictions of Mass Gatherings"] <- "Restrict mass gatherings"
+coronanet$type[coronanet$type == "Social Distancing"] <- "Social distancing"
+coronanet$type[coronanet$type == "Quarantine/Lockdown"] <- "Quarantine"
+coronanet$type[coronanet$type == "Health Monitoring"] <- "Health monitoring"
+coronanet$type[coronanet$type == "Health Resources"] <- "Health resources"
+coronanet$type[coronanet$type == "Health Testing"] <- "Testing"
+coronanet$type[coronanet$type == "New Task Force or Bureau"] <- "New task force"
+coronanet$type[coronanet$type == "Public Awareness Campaigns"] <- "Public awareness campaigns"
+coronanet$type[coronanet$type == "Other Policy Not Listed Above"] <- "Other"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Doctors"] <- " (doctors)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Government Quarantine (i.e. quarantine at a government hotel or facility)"] <- " (by gov.)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Hand Sanitizer"] <- " (hand sanitizer)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Health Certificates"] <- " (health certificates)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Health Research Facilities"] <- " (research facilities)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Health Screenings (e.g. temperature checks)"] <- " (screenings)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Health Volunteers"] <- " (health volunteers)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Higher education (i.e. degree granting institutions)"] <- " (higher ed.)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Hospitals"] <- " (hospitals)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Masks"] <- " (masks)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Non-Essential Commercial Businesses"] <- " (commercial businessess)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Nurses"] <- " (nurses)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Other"] <- " (other)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Other Health Infrastructure"] <- " (other infrastructure)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Other Health Materials"] <- " (other materials)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Other Heath Staff"] <- " (other staff)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Personal Grooming (e.g. hair salons)"] <- " (personal grooming)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Preschool or childcare facilities (generally for children ages 5 and below)"] <- " (preschool/childcare)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Primary Schools (generally for children ages 10 and below)"] <- " (primary)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Public Testing Facilities (e.g. drive-in testing for COVID-19)"] <- " (testing facilities)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Quarantine only applies to people of certain ages. Please note the age restrictions in the text box."] <- " (certain ages only)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Quarantine outside the home or government facility (i.e. quarantine in a hotel)"] <- " (outside home or gov.)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Restaurants/Bars"] <- " (restaurants/bars)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Retail Businesses"] <- " (retail)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Secondary Schools (generally for children ages 10 to 18)"] <- " (secondary ed.)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Self-Quarantine (i.e. quarantine at home)"] <- " (self-quarantine)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Shopping Centers"] <- " (shopping centers)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Temporary Medical Centers"] <- " (temp. medical centers)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Temporary Quarantine Centers"] <- " (temp. quarantine centers)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Test Kits"] <- " (test kits)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Travel History Form (e.g. documents where traveler has recently been)"] <- " (travel history form)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Unspecified Health Infrastructure"] <- " (unspecified infrastructure)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Unspecified Health Materials"] <- " (unspecified materials)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Unspecified Health Staff"] <- " (unspecified staff)"
+coronanet$type_sub_cat[coronanet$type_sub_cat == "Ventilators"] <- " (ventilators)"
+coronanet$type_sub_cat[is.na(coronanet$type_sub_cat)] <- ""
+coronanet$Measure <- paste0(coronanet$type, coronanet$type_sub_cat)
+coronanet <- select(coronanet, date_start, country, init_country_level, link, Measure)
+coronanet <- filter(coronanet, init_country_level == "National" | init_country_level == "No, it is at the national level")
+coronanet <- select(coronanet, -init_country_level)
+coronanet <- unique(coronanet[ , 1:4])
+names(coronanet) <- c("Date", "Country", "Link", "Measure")
+coronanet <- select(coronanet, -Link)
+coronanet <- unique(coronanet[ , 1:3])
+coronanet <- coronanet %>%
+  group_by(Country, Date) %>%
+  mutate(Measure = paste0(Measure, collapse = " <br> "))
+coronanet <- unique(coronanet[ , 1:3])
 
 # select, rename testing variables
 testing <- select(testing, Entity, Date, "Cumulative total")
 names(testing) <- c("Description", "Date", "Tests")
+#levels(as.factor(testing$Description))
+#View(filter(testing, Description == "India - people tested"))
 testing <- filter(testing, Description != "United States - inconsistent units (COVID Tracking Project)")
 testing <- filter(testing, Description != "Japan - people tested")
+testing <- filter(testing, Description != "Italy - people tested")
+testing <- filter(testing, Description != "United Kingdom - tests performed")
+testing <- filter(testing, Description != "India - people tested")
 
 # split testing$Entity into Country and Units
 newtesting <- colsplit(testing$Description, " - ", names = c("Country", "Units"))
@@ -76,6 +148,19 @@ covid_cases <- lapply(covid_cases, function(df) {
 })
 testing$Date <- as.Date(testing$Date, "%Y-%m-%d")
 testing$Country[testing$Country == "Czech Republic"] <- "Czechia"
+# setdiff(levels(as.factor(covid_cases[[1]]$Country)), levels(as.factor(coronanet$Country)))
+coronanet$Country[coronanet$Country == "Ivory Coast"] <- "Cote d'Ivoire"
+coronanet$Country[coronanet$Country == "Czech Republic"] <- "Czechia"
+coronanet$Country[coronanet$Country == "Swaziland"] <- "Eswatini"
+coronanet$Country[coronanet$Country == "Macedonia"] <- "North Macedonia"
+coronanet$Country[coronanet$Country == "Republic of Congo"] <- "Republic of the Congo"
+coronanet$Country[coronanet$Country == "Saint Kitts and Nevis"] <- "St. Kitts and Nevis"
+coronanet$Country[coronanet$Country == "Saint Lucia"] <- "St. Lucia"
+coronanet$Country[coronanet$Country == "Saint Vincent and the Grenadines"] <- "St. Vincent and the Grenadines"
+coronanet$Country[coronanet$Country == "United Republic of Tanzania"] <- "Tanzania"
+coronanet$Country[coronanet$Country == "Gambia"] <- "The Gambia"
+coronanet$Country[coronanet$Country == "East Timor"] <- "Timor-Leste"
+coronanet$Country[coronanet$Country == "United States of America"] <- "United States"
 
 # summarize by country
 covid_cases[[1]] <- aggregate(data = covid_cases[[1]], Total ~ Country + Date, sum, drop = FALSE)
@@ -93,6 +178,9 @@ covid_cases <- covid_cases %>% reduce(left_join, by = c("Country", "Date"))
 
 # merge covid_cases and testing on Country and Date
 covid_cases <- merge(covid_cases, testing, by = c("Country", "Date"), all = TRUE)
+
+# merge covid_cases and coronanet on Country and Date
+covid_cases <- merge(covid_cases, coronanet, by = c("Country", "Date"), all = TRUE)
 
 # add DayCount variable
 covid_cases <- covid_cases %>% group_by(Country) %>% mutate(DayCount = row_number())
@@ -138,9 +226,24 @@ covid_cases$Population_mil <- (covid_cases$Population)/1000000
 covid_cases <- filter(covid_cases, Country != "Diamond Princess")
 covid_cases <- filter(covid_cases, Country != "MS Zaandam")
 
-# restructuring for app
+# limit to obs where Day exists
 covid_cases <- covid_cases %>% drop_na(Day)
-covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, Units, Description, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
+
+# top 10
+countries <- select(covid_cases, Country, Date, Totalper100_000, Total)
+countries <- countries %>% group_by(Country) %>% slice(which.max(Date))
+countries[with(countries, order(-Total)), ]
+
+# middle 10
+nlevels(as.factor(countries$Country))
+middlecountries <- countries[with(countries, order(-Total)), ]
+middlecountries[62:71,]
+
+# bottom 10
+countries[with(countries, order(Total)), ]
+
+# restructuring for app
+covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, Units, Measure, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
 
 # write csv
 write.csv(covid_cases, "covid_cases.csv", row.names = FALSE)
