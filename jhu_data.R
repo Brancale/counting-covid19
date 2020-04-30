@@ -201,6 +201,9 @@ worldstats <- filter(worldstats, Country %in% levels(as.factor(covid_cases$Count
 # merge covid_cases and worldstats
 covid_cases <- merge(covid_cases, worldstats, by = c("Country"), all = TRUE)
 
+# transform NewCases variable to per 100,000 people scale
+covid_cases$NewCases <- (covid_cases$NewCases/covid_cases$Population)*100000
+
 # add Totalper100_000 variable
 covid_cases$Totalper100_000 <- (covid_cases$Total/covid_cases$Population)*100000
 
@@ -243,7 +246,7 @@ middlecountries[62:71,]
 countries[with(countries, order(Total)), ]
 
 # restructuring for app
-covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, Units, Measure, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc)
+covid_cases <- select(covid_cases, Country, Day, Date, Testsper100_000, NewCases, Units, Measure, Totalper100_000, DeathRate, Population_mil, Over65_perc, Slums_perc, GDP_pcap_ppp, Salaried_perc, Poverty_perc, StatsCapacity, SciArticles, LifeExp, HospBed_per10thou, MD_per10thou, HygBasic_natperc, Population)
 
 # write csv
 write.csv(covid_cases, "covid_cases.csv", row.names = FALSE)
