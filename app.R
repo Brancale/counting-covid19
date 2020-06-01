@@ -691,10 +691,10 @@ server <- function(input, output, session) {
                      ggplot(selected_covid_case()) +
                        geom_line(data = min_covid_case(),
                                  aes(x = Day, y = NewCases, group = Country,
-                                     text = paste(Country, "<br>Day: ", Day, "<br>New Cases (scaled): ", round(NewCases, digits = 1), "<br>New Cases (actual): ", round(NewCases_actual, digits = 1))),
+                                     text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>New Cases (scaled): ", round(NewCases, digits = 1), "<br>New Cases (actual): ", round(NewCases_actual, digits = 1))),
                                  color = "#bdc3c7", alpha = .5, show.legend = FALSE) +
                        geom_line(aes(x = Day, y = NewCases, color = Country, group = Country,
-                                     text = paste(Country, "<br>Day: ", Day, "<br>New Cases (scaled): ", round(NewCases, digits = 1), "<br>New Cases (actual): ", round(NewCases_actual, digits = 1))),
+                                     text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>New Cases (scaled): ", round(NewCases, digits = 1), "<br>New Cases (actual): ", round(NewCases_actual, digits = 1))),
                                  show.legend = FALSE) +
                        geom_smooth(aes(x = Day, y = NewCases), data = min_covid_case(),
                                    method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
@@ -732,7 +732,7 @@ server <- function(input, output, session) {
     input$updategraph
     isolate({
       newcases_plot() %>% add_trace(data = subset(selected_covid_case(), !is.na(Measure)), y = ~log10(NewCases), x = ~Day,
-                                 text = ~paste(Country, "<br>Day: ", Day, "<br>New Cases (scaled): ", round(NewCases, digits = 1), "<br>New Cases (actual): ", round(NewCases_actual, digits = 1), "<br>Policies enacted today: ", "<br>", Measure),
+                                 text = ~paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>New Cases (scaled): ", round(NewCases, digits = 1), "<br>New Cases (actual): ", round(NewCases_actual, digits = 1), "<br>Policies enacted today: ", "<br>", Measure),
                                  color = I("#575D61"), mode = "markers", alpha = .7, marker = list(size = 7), showlegend = FALSE,
                                  hovertemplate = "%{text}<extra></extra>")
     })
@@ -758,9 +758,9 @@ server <- function(input, output, session) {
         ggplot(selected_covid_case()) +
           geom_line(data = min_covid_case(),
                     aes(x = Tests, y = Cases, group = Country,
-                        text = paste(Country, "<br>Day: ", Day, "<br>Tests (scaled): ", round(Tests, digits = 1), "<br>Tests (actual): ", round(Tests_actual, digits = 1), "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))), color = "#bdc3c7", alpha = .5, show.legend = FALSE) +
+                        text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Tests (scaled): ", round(Tests, digits = 1), "<br>Tests (actual): ", round(Tests_actual, digits = 1), "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))), color = "#bdc3c7", alpha = .5, show.legend = FALSE) +
           geom_line(aes(x = Tests, y = Cases, color = Country, group = Country,
-                        text = paste(Country, "<br>Day: ", Day, "<br>Tests (scaled): ", round(Tests, digits = 1), "<br>Tests (actual): ", round(Tests_actual, digits = 1), "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))), show.legend = FALSE) +
+                        text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Tests (scaled): ", round(Tests, digits = 1), "<br>Tests (actual): ", round(Tests_actual, digits = 1), "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))), show.legend = FALSE) +
           geom_smooth(aes(x = Tests, y = Cases), data = min_covid_case(),
                       method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
           geom_ribbon(aes(x = Tests, y = Cases), data = min_covid_case(),
@@ -796,7 +796,7 @@ server <- function(input, output, session) {
     input$updategraph
     isolate({
       tests_plot() %>% add_trace(data = subset(selected_covid_case(), !is.na(Measure)), y = ~log10(Cases), x = ~log10(Tests),
-                                 text = ~paste(Country, "<br>Day: ", Day, "<br>Tests (scaled): ", round(Tests, digits = 1), "<br>Tests (actual): ", round(Tests_actual, digits = 1), "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1), "<br>Policies enacted today: ", "<br>", Measure),
+                                 text = ~paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Tests (scaled): ", round(Tests, digits = 1), "<br>Tests (actual): ", round(Tests_actual, digits = 1), "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1), "<br>Policies enacted today: ", "<br>", Measure),
                                  color = I("#575D61"), mode = "markers", alpha = .7, marker = list(size = 7), showlegend = FALSE,
                                  hovertemplate = "%{text}<extra></extra>")
     })
@@ -820,10 +820,10 @@ server <- function(input, output, session) {
       ggplot(selected_covid_case()) +
       geom_line(data = min_covid_case(),
                 aes(x = Day, y = Cases, group = Country,
-                    text = paste(Country, "<br>Day: ", Day, "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))),
+                    text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))),
                 color = "#bdc3c7", alpha = .5, show.legend = FALSE) +
       geom_line(aes(x = Day, y = Cases, color = Country, group = Country,
-                    text = paste(Country, "<br>Day: ", Day, "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))),
+                    text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1))),
                 show.legend = FALSE) +
       geom_smooth(aes(x = Day, y = Cases), data = min_covid_case(),
         method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
@@ -861,7 +861,7 @@ server <- function(input, output, session) {
     input$updategraph
     isolate({
       cases_plot() %>% add_trace(data = subset(selected_covid_case(), !is.na(Measure)), y = ~log10(Cases), x = ~Day,
-                                 text = ~paste(Country, "<br>Day: ", Day, "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1), "<br>Policies enacted today: ", "<br>", Measure),
+                                 text = ~paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Cases (scaled): ", round(Cases, digits = 1), "<br>Cases (actual): ", round(Cases_actual, digits = 1), "<br>Policies enacted today: ", "<br>", Measure),
                                  color = I("#575D61"), mode = "markers", alpha = .7, marker = list(size = 7), showlegend = FALSE,
                                  hovertemplate = "%{text}<extra></extra>")
     })
@@ -884,10 +884,10 @@ server <- function(input, output, session) {
       ggplotly(
       ggplot(selected_covid_case()) +
       geom_line(data = min_covid_case(), aes(x = Day, y = DeathRate, group = Country,
-                                             text = paste(Country, "<br>Day: ", Day, "<br>Death Rate: ", paste(round(100*DeathRate, 2), "%", sep = ""))),
+                                             text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Death Rate: ", paste(round(100*DeathRate, 2), "%", sep = ""))),
                 color = "#bdc3c7", show.legend = FALSE) +
       geom_line(aes(x = Day, y = DeathRate, color = Country, group = Country,
-                    text = paste(Country, "<br>Day: ", Day, "<br>Death Rate: ", paste(round(100*DeathRate, 2), "%", sep = ""))), show.legend = FALSE) +
+                    text = paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Death Rate: ", paste(round(100*DeathRate, 2), "%", sep = ""))), show.legend = FALSE) +
       geom_smooth(aes(x = Day, y = DeathRate), data = min_covid_case(),
                     method = "loess", se = FALSE, color = "#bdc3c7", size = .5, alpha = .6, linetype = "dotted") +
       geom_ribbon(aes(x = Day, y = DeathRate), data = min_covid_case(),
@@ -924,7 +924,7 @@ server <- function(input, output, session) {
     input$updategraph
     isolate({
       case_fatality_plot() %>% add_trace(data = subset(selected_covid_case(), !is.na(Measure)), y = ~DeathRate, x = ~Day,
-                                         text = ~paste(Country, "<br>Day: ", Day, "<br>Death Rate: ", paste(round(100*DeathRate, 2), "%", sep = ""),  "<br>Policies enacted today: ", "<br>", Measure),
+                                         text = ~paste(Country, "<br>Day: ", Day, "<br>Date: ", Date, "<br>Death Rate: ", paste(round(100*DeathRate, 2), "%", sep = ""),  "<br>Policies enacted today: ", "<br>", Measure),
                                          color = I("#575D61"), mode = "markers", alpha = .7, marker = list(size = 7), showlegend = FALSE,
                                          hovertemplate = "%{text}<extra></extra>")
     })
