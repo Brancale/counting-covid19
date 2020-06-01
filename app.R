@@ -350,7 +350,7 @@ server <- function(input, output, session) {
     pickerInput(
       inputId = "countriesinput", label = h5("Select countries to include in plot"),
       choices = countrieslist,
-      selected = c("United States", "Spain", "Italy", "France", "Germany", "United Kingdom", "Turkey", "Iran", "China", "Russia", "Hungary", "Croatia", "Uzbekistan", "Oman", "Iceland", "Iraq", "Estonia", "Armenia", "Azerbaijan", "New Zealand", "Trinidand and Tobago", "Ethiopia", "Liberia", "Cambodia", "Madagascar", "Maldives", "Brunei", "Myanmar", "Gabon", "Sudan"),
+      selected = c("United States", "Spain", "Italy", "Germany", "United Kingdom", "Turkey", "Iran", "Russia", "Hungary", "Oman", "Iceland", "Iraq", "Estonia", "New Zealand"),
       multiple = TRUE,
       options = list(`actions-box` = TRUE)
     )
